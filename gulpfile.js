@@ -1,27 +1,25 @@
+const gulp = require('gulp');  
 const sass = require('gulp-sass')(require('sass'));
-
 const uglify = require('gulp-uglify');
 
-const imagemin = require('gulp-imagemin');
-
-function comprimeImagens(){
-    return gulp.src('/source/images/*')
-    .pipe(imagemin())
-    .pipe(gulp.dest('./build/images'));
+async function comprimeImagens() {
+    const imagemin = (await import('gulp-imagemin')).default;
+    return gulp.src('./source/images/*', {encoding: false}) 
+        .pipe(imagemin())
+        .pipe(gulp.dest('./build/images'));
 }
 
-function comprimeJavaScript(){
+function comprimeJavaScript() {
     return gulp.src('./source/scripts/*.js')
-    .pipe(uglify())
-    .pipe(gulp.dest('./build/scripts'))
+        .pipe(uglify())
+        .pipe(gulp.dest('./build/scripts'));
 }
 
-function compilaSass(){
-    return gulp.src('./source/styles/*main.scss')
-    .pipe(sass())
-    .pipe(gulp.dest('.build/styles'));
+function compilaSass() {
+    return gulp.src('./source/styles/*.scss')
+        .pipe(sass())
+        .pipe(gulp.dest('./build/styles'));
 }
 
-exports.sass = compilaSass;
-exports.javascript = comprimeJavaScript;
-exports.images = comprimeImagens;
+
+exports.default = gulp.series(compilaSass, comprimeJavaScript, comprimeImagens);
